@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WAY Control · Anbieter & Kategorien</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="password-gate" class="password-gate" aria-live="polite">
+    <div class="password-gate-card">
+      <h2>Passwort erforderlich</h2>
+      <p>Bitte gib das freigegebene Passwort ein, um Zugriff auf die Plattform zu erhalten.</p>
+      <form id="password-gate-form">
+        <label>
+          <span>Passwort</span>
+          <input id="password-gate-input" type="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit">Freischalten</button>
+        <p id="password-gate-message" class="password-gate-message" role="status"></p>
+      </form>
+    </div>
+  </div>
+  <div class="hero-wrapper">
+    <header class="hero" aria-labelledby="hero-title">
+      <div class="hero-titles">
+        <h1 id="hero-title">Anbieter erfassen</h1>
+      </div>
+      <div class="hero-search">
+        <label>
+          <span>Suche</span>
+          <input id="provider-search" type="search" placeholder="Name, Kategorie oder Thema" autocomplete="off" />
+        </label>
+      </div>
+    </header>
+  </div>
+  <section class="main-layout">
+    <aside class="sidebar" aria-label="Navigationsmenü">
+      <div class="sidebar-brand">
+        <div class="logo-glow"></div>
+        <div>
+          <strong>WAY Control</strong>
+          <small>Verwaltung</small>
+        </div>
+      </div>
+      <nav class="sidebar-nav" role="tablist" aria-label="Bereiche">
+        <button type="button" role="tab" aria-controls="dashboard-panel" aria-selected="false" data-view="dashboard">Dashboard</button>
+        <button type="button" role="tab" aria-controls="providers-panel" aria-selected="true" data-view="providers" class="is-active">Anbieter erfassen</button>
+        <button type="button" role="tab" aria-controls="provider-overview-panel" aria-selected="false" data-view="provider-overview">Anbieter Übersicht</button>
+        <button type="button" role="tab" aria-controls="categories-panel" aria-selected="false" data-view="categories">Kategorien erfassen</button>
+        <button type="button" role="tab" aria-controls="category-overview-panel" aria-selected="false" data-view="category-overview-page">Kategorien Übersicht</button>
+      </nav>
+      <p class="sidebar-note">Alle Einträge bleiben lokal im Browser gespeichert. Kein Login erforderlich.</p>
+    </aside>
+    <section class="content-area">
+      <section class="content-panel is-active" data-view="providers" id="providers-panel">
+        <div class="panel">
+          <div class="panel-toolbar">
+            <button type="button" id="new-provider-button" class="ghost panel-btn">Neuen Anbieter anlegen</button>
+            <button type="button" id="provider-export-button" class="ghost panel-btn">Anbieter exportieren</button>
+          </div>
+          <div class="panel-body">
+            <div class="grid-two">
+              <div>
+                <h2>Anbieter erfassen</h2>
+                <form id="provider-form" autocomplete="off">
+              <div class="provider-grid">
+                <label class="grid-span-full">
+                  Name
+                  <input type="text" name="name" required placeholder="z. B. Musterfirma GmbH" />
+                </label>
+                <div class="grid-address grid-span-full">
+                  <label>
+                    Straße
+                    <input type="text" name="street" placeholder="Straße 1" required />
+                  </label>
+                  <label>
+                    PLZ
+                    <input type="text" name="postal" placeholder="12345" required />
+                  </label>
+                  <label>
+                    Ort
+                    <input type="text" name="city" placeholder="Hamburg" required />
+                  </label>
+                </div>
+                <label>
+                  Land
+                  <select name="country" id="country-select" required></select>
+                </label>
+                <label>
+                  Bundesland
+                  <select name="state" id="state-select" required></select>
+                </label>
+                <label>
+                  Status
+                  <select name="status" required>
+                    <option value="offen">Offen</option>
+                    <option value="erledigt">Erledigt</option>
+                    <option value="inbearbeitung">In Bearbeitung</option>
+                  </select>
+                </label>
+                <label class="grid-span-full">
+                  Website
+                  <input type="url" name="website" placeholder="https://example.com" />
+                </label>
+              </div>
+              <div class="assignment-module">
+                <div class="assignment-controls">
+                  <div class="assignment-fields">
+                    <label>
+                      Kategorie
+                      <select id="provider-category-select" required>
+                        <option value="">Kategorie wählen</option>
+                      </select>
+                    </label>
+                    <label>
+                      Themenbereich (optional)
+                      <select id="provider-topic-select" disabled>
+                        <option value="">Themenbereich wählen (optional)</option>
+                      </select>
+                    </label>
+                    <label>
+                      Thema (optional)
+                      <select id="provider-theme-select" disabled>
+                        <option value="">Thema wählen (optional)</option>
+                      </select>
+                    </label>
+                  </div>
+                  <button type="button" id="provider-assoc-add" class="ghost ghost-small">Zuordnung hinzufügen</button>
+                </div>
+                <div id="provider-associations" class="assignment-list" aria-live="polite">
+                  <p class="muted">Keine Zuordnung</p>
+                </div>
+              </div>
+              <div class="form-actions-row">
+                <button type="submit">Anbieter speichern</button>
+                <button type="button" id="provider-cancel-edit" class="ghost" hidden>Abbrechen</button>
+              </div>
+              <p id="form-message" class="form-message" role="status"></p>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="content-panel" data-view="provider-overview" id="provider-overview-panel">
+        <div class="panel">
+          <div class="panel-toolbar">
+            <button type="button" id="provider-refresh-button" class="ghost panel-btn">Liste aktualisieren</button>
+            <button type="button" id="overview-new-provider-button" class="ghost panel-btn">Neuen Anbieter</button>
+          </div>
+          <div class="panel-headline">
+            <div>
+              <h2>Anbieter Übersicht</h2>
+              <p class="panel-subtitle">Reduzierte Übersicht mit Bearbeiten-/Löschen-Funktionen und Statuschips.</p>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <p class="table-hint">Zeile oder „Bearbeiten“ klicken, um einen Eintrag zu öffnen.</p>
+            <table id="provider-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Adresse</th>
+                  <th>Land</th>
+                  <th>Bundesland</th>
+                  <th>Status</th>
+                  <th>Zuordnungen</th>
+                  <th>Website</th>
+                  <th>Aktion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="8" class="empty">Noch keine Anbieter angelegt.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <section class="content-panel" data-view="categories" id="categories-panel">
+          <div class="panel module" id="category-module">
+            <div class="panel-toolbar">
+              <button type="button" id="focus-category-button" class="ghost panel-btn">Kategorien erfassen</button>
+              <button type="button" id="category-export-button" class="ghost panel-btn">Kategorien exportieren</button>
+            </div>
+            <div class="panel-headline">
+              <div>
+                <h2>Kategorien &amp; Themenmodule</h2>
+                <p class="panel-subtitle">Erzeuge Kategorien, Themenbereiche, Themen und Tags Schritt für Schritt und verwalte sie im Modul.</p>
+              </div>
+            </div>
+            <div class="module-content">
+              <div class="hierarchy-forms">
+              <form id="category-form" autocomplete="off">
+                <h3>Kategorie erfassen</h3>
+                <label>
+                  Kategorie
+                  <input type="text" name="category" required placeholder="z. B. Security" />
+                </label>
+                <div class="form-actions form-actions-inline">
+                  <button type="submit">Kategorie speichern</button>
+                  <button type="button" id="category-cancel" class="ghost" hidden>Abbrechen</button>
+                </div>
+                <p id="category-message" class="form-message" role="status"></p>
+              </form>
+              <form id="topic-form" autocomplete="off">
+                <h3>Themenbereich hinzufügen</h3>
+                <label>
+                  Kategorie
+                  <select id="topic-category-select" name="category">
+                    <option value="">Kategorie wählen</option>
+                  </select>
+                </label>
+                <label>
+                  Themenbereich
+                  <input type="text" name="topicArea" placeholder="z. B. Netzwerk" />
+                </label>
+                <div class="form-actions form-actions-inline">
+                  <button type="submit">Bereich speichern</button>
+                  <button type="button" id="topic-cancel" class="ghost" hidden>Abbrechen</button>
+                </div>
+                <p id="topic-message" class="form-message" role="status"></p>
+              </form>
+              <form id="theme-form" autocomplete="off">
+                <h3>Thema & Tags</h3>
+                <div class="theme-category-display" id="theme-category-display">Kategorie: –</div>
+                <label>
+                  Themenbereich
+                  <select id="theme-topic-select" name="topicArea" disabled>
+                    <option value="">Themenbereich wählen</option>
+                  </select>
+                </label>
+                <label>
+                  Thema
+                  <input type="text" name="theme" placeholder="z. B. Firewall" />
+                </label>
+                <label>
+                  Tags (kommagetrennt)
+                  <input type="text" name="tags" placeholder="z. B. Monitoring, SLA" />
+                </label>
+                <div class="form-actions form-actions-inline">
+                  <button type="submit">Thema speichern</button>
+                  <button type="button" id="theme-cancel" class="ghost" hidden>Abbrechen</button>
+                </div>
+                <p id="theme-message" class="form-message" role="status"></p>
+              </form>
+            </div>
+            </div>
+            <div class="module-list">
+              <label class="module-search">
+                <span>Struktur durchsuchen</span>
+                <input id="hierarchy-search" type="search" placeholder="Kategorie, Bereich, Thema oder Tag" autocomplete="off" />
+              </label>
+              <div class="module-list-header">
+              <h3>Strukturierte Übersicht</h3>
+              <span id="category-count">0 Kategorien</span>
+            </div>
+            <div id="category-hierarchy" class="hierarchy-tree">
+              <p class="empty">Noch keine Kategorien angelegt.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="content-panel" data-view="category-overview-page" id="category-overview-panel">
+        <div class="panel overview-panel">
+          <div class="panel-toolbar">
+            <button type="button" id="overview-refresh-button" class="ghost panel-btn">Übersicht auffrischen</button>
+            <button type="button" id="overview-category-button" class="ghost panel-btn">Kategorien verwalten</button>
+          </div>
+          <div class="overview-module">
+            <div class="overview-header">
+              <div>
+                <h3>Kategorieübersicht</h3>
+                <p>Listenansicht aller Kategorien, Themenbereiche und Themen mit Suchfunktion und Partnerzahlen.</p>
+              </div>
+              <label class="overview-search-label">
+                <input id="overview-search" type="search" placeholder="Kategorie, Bereich oder Thema suchen" autocomplete="off" />
+              </label>
+            </div>
+            <p class="overview-stats" id="overview-stats">0 Kategorien · 0 Anbieter</p>
+            <div id="category-overview" class="overview-list">
+              <p class="empty">Noch keine Kategorien angelegt.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="content-panel" data-view="dashboard" id="dashboard-panel">
+        <div class="panel dashboard-panel">
+          <div class="panel-toolbar">
+            <button type="button" class="ghost panel-btn" id="dashboard-refresh-button">Aktualisieren</button>
+            <label class="dashboard-country-label">
+              Land wählen
+              <select id="dashboard-country-select">
+                <option value="Deutschland">Deutschland</option>
+              </select>
+            </label>
+          </div>
+          <div class="panel-headline">
+            <div>
+              <h2>Dashboard</h2>
+              <p class="panel-subtitle">Bundesländer, Kategorien und zugeordnete Anbieter im Überblick.</p>
+            </div>
+          </div>
+          <div class="dashboard-tabs" role="tablist">
+            <button type="button" class="dashboard-tab is-active" data-dashboard-pane="overview" role="tab">Übersicht</button>
+            <button type="button" class="dashboard-tab" data-dashboard-pane="categories" role="tab">Kategorien</button>
+            <button type="button" class="dashboard-tab" data-dashboard-pane="themenbereich" role="tab">Themenbereich</button>
+            <button type="button" class="dashboard-tab" data-dashboard-pane="gaps" role="tab">Top-Lücken</button>
+          </div>
+          
+          <div class="dashboard-pane" data-pane="overview">
+            <div class="dashboard-grid">
+              <div class="dashboard-card dashboard-progress-card">
+                <h3>
+                  <span class="dashboard-card-label">Mission</span>
+                  <span class="dashboard-card-title">Gesamtfortschritt</span>
+                </h3>
+                <p class="dashboard-card-note">Prozent der Kategorien, die bereits mindestens drei Partner haben.</p>
+                <div id="dashboard-completion-gauge" class="dashboard-gauge">
+                  <p class="empty">Noch keine Kategorien oder Themen.</p>
+                </div>
+              </div>
+              <div class="dashboard-card dashboard-progress-card dashboard-target-card">
+                <h3>
+                  <span class="dashboard-card-label">Ziel</span>
+                  <span class="dashboard-card-title">500 Anbieter</span>
+                </h3>
+                <p class="dashboard-card-note">Fortschritt bis 500 erfasste Anbieter (ausgewähltes Land).</p>
+                <div id="dashboard-provider-target-gauge" class="dashboard-gauge">
+                  <p class="empty">Noch keine Anbieter.</p>
+                </div>
+              </div>
+              <div class="dashboard-card dashboard-top-flop-card">
+                <div class="top-flop-header">
+                  <div>
+                    <span class="dashboard-card-label">TOP Bundesland</span>
+                  </div>
+                  <div>
+                    <span class="dashboard-card-label">FLOP Bundesland</span>
+                  </div>
+                </div>
+                <div id="dashboard-top-flop" class="top-flop-body">
+                  <p class="empty">Noch keine Daten.</p>
+                </div>
+              </div>
+              <div class="dashboard-card dashboard-matrix-row">
+                <h3>
+                  <span class="dashboard-card-label">Partnermatrix</span>
+                  <span class="dashboard-card-title">Kategorie ▸ Bundesland</span>
+                </h3>
+                <p class="dashboard-card-note">Zeigt die Anbieterzahlen je Kategorie und Bundesland.</p>
+                <div id="dashboard-category-state-matrix" class="dashboard-state-matrix">
+                  <p class="empty">Noch keine Kategorien oder Anbieter.</p>
+                </div>
+              </div>
+              <div class="dashboard-card">
+                <h3>
+                  <span class="dashboard-card-label">Verteilung</span>
+                  <span class="dashboard-card-title">Bundesländer</span>
+                </h3>
+                <p class="dashboard-card-note">Jedes Land mit Anbieterzahl.</p>
+                <div id="dashboard-state-chart" class="dashboard-chart">
+                  <p class="empty">Noch keine Daten.</p>
+                </div>
+              </div>
+              <div class="dashboard-card dashboard-category-summary-card">
+                <h3>
+                  <span class="dashboard-card-label">Kategorien</span>
+                  <span class="dashboard-card-title">Partner je Kategorie</span>
+                </h3>
+                <p class="dashboard-card-note">Ranking der häufigsten Kategorien.</p>
+                <div id="dashboard-category-bars" class="dashboard-category-chart">
+                  <p class="empty">Noch keine Kategorien.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-pane" data-pane="categories" hidden>
+            <div class="dashboard-card">
+              <h3>
+                <span class="dashboard-card-label">Länderzuordnung</span>
+                <span class="dashboard-card-title">Kategorie·Bundesland</span>
+              </h3>
+              <p class="dashboard-card-note">Schnell erkennen, wo Kategorien fehlen.</p>
+              <div id="dashboard-category-counts" class="dashboard-list">
+                <p class="empty">Noch keine Kategorien.</p>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-pane" data-pane="themenbereich" hidden>
+            <div class="dashboard-card">
+              <h3>
+                <span class="dashboard-card-label">Themenbereiche</span>
+                <span class="dashboard-card-title">Category · Topics</span>
+              </h3>
+              <p class="dashboard-card-note">Lücken pro Bundesland auf einen Blick.</p>
+              <div id="dashboard-category-topic-states" class="dashboard-category-topic-chart">
+                <p class="empty">Noch keine Zuordnungen.</p>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-pane" data-pane="gaps" hidden>
+            <article class="dashboard-summary-card">
+              <div class="dashboard-summary-card-head">
+                <h4>Themenbereiche ohne 3+ Anbieter</h4>
+                <p>Liste der kritischsten Lücken in allen Bundesländern</p>
+              </div>
+              <div class="dashboard-gap-toolbar">
+                <label class="dashboard-gap-filter">
+                  Kategorie filter
+                  <select id="dashboard-gap-category-select">
+                    <option value="">Alle Kategorien</option>
+                  </select>
+                </label>
+              </div>
+              <div class="dashboard-gap-tabs">
+                <button type="button" class="ghost gap-tab-button is-active" data-tab="top">Top-Lücken</button>
+                <button type="button" class="ghost gap-tab-button" data-tab="all">Alle Lücken</button>
+              </div>
+              <div id="dashboard-gap-top" class="dashboard-gap-list"></div>
+              <div id="dashboard-gap-all" class="dashboard-gap-list" hidden></div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </section>
+  </section>
+  <footer class="footer">
+    <p>MyWayCard.com · <span id="footer-time">-</span></p>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>
