@@ -158,7 +158,7 @@ const heroTitleMap = {
 
 const PROVIDER_TARGET_COUNT = 500;
 const PASSWORD_GATE_STORAGE_KEY = "waycontrolUnlocked";
-const PASSWORD_GATE_SECRET = "WayControlLink2026";
+const PASSWORD_GATE_SECRET = "Lina2012";
 
 const providerCategorySelect = document.getElementById("provider-category-select");
 const providerTopicSelect = document.getElementById("provider-topic-select");
