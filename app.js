@@ -5,8 +5,8 @@ const providerTable = "providers";
 const categoryTable = "categories";
 const topicTable = "topic_areas";
 const themeTable = "themes";
-const PASSWORD_GATE_STORAGE_KEY = "waycontrolUnlocked";
-const PASSWORD_GATE_SECRET = "Lina2012";
+
+
 async function handleResponse(data, error, fallback) {
 if (error) {
 console.error(error);
